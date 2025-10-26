@@ -12,6 +12,8 @@ We have a functioning crypto trading platform currently live on 11 CEXs, with a 
 
 Goal: Build a demonstrable Encode London dApp using HyperIndex and HyperSync to transform blockchain data into intelligent, queryable insights across multiple chains.
 
+![image](problem_sulution.png)
+
 ---
 
 ## Problem Description
