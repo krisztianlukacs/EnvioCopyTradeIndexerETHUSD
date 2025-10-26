@@ -1,0 +1,99 @@
+# Envio HyperIndex Configuration
+# Copy Trading Detection and Monitoring System
+# Migrated from TheGraph-based CopyTrader project
+
+name: envio-copytrader-indexer
+description: Copy Trading Detection and Monitoring System using Envio HyperIndex for ETH/USDC Uniswap V3 pools
+
+# Networks to index
+networks:
+  - id: 1  # Ethereum Mainnet
+    start_block: 19000000  # Start from recent blocks (adjust as needed)
+    contracts:
+      # Uniswap V3 ETH/USDC 0.05% Fee Pool
+      - name: UniswapV3Pool_005
+        address:
+          - 0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640
+        handler: src/EventHandlers.ts
+        events:
+          - event: Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)
+            requiredEntities:
+              - name: Trade
+              - name: DailySummary
+              - name: WalletActivity
+
+      # Uniswap V3 ETH/USDC 0.3% Fee Pool
+      - name: UniswapV3Pool_030
+        address:
+          - 0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8
+        handler: src/EventHandlers.ts
+        events:
+          - event: Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)
+            requiredEntities:
+              - name: Trade
+              - name: DailySummary
+              - name: WalletActivity
+
+      # Uniswap V3 ETH/USDC 1% Fee Pool
+      - name: UniswapV3Pool_100
+        address:
+          - 0x7BeA39867e4169DBe237d55C8242a8f2fcDcc387
+        handler: src/EventHandlers.ts
+        events:
+          - event: Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)
+            requiredEntities:
+              - name: Trade
+              - name: DailySummary
+              - name: WalletActivity
+
+# Monitored wallets (from original config)
+# These wallets are tracked for copy trading detection
+monitoredWallets:
+  # Top trader - 464 swaps in 7 days
+  - address: "0x66a9893c904a664803c4fcbfa47e75f5d30e7dab"
+    name: "HFT_Trader_1"
+
+  # Very active - 222 swaps in 7 days
+  - address: "0xfbd4cdb40e862397a2f89a854e0e7e8f7e794c37"
+    name: "Active_Trader_2"
+
+  # Active trader - 165 swaps
+  - address: "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad"
+    name: "Active_Trader_3"
+
+  # Frequent swapper - 146 swaps
+  - address: "0x51c72848c68a965f66fa7a88855f9f7784502a7f"
+    name: "Frequent_Swapper"
+
+  # Regular trader - 118 swaps
+  - address: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c"
+    name: "Regular_Trader"
+
+# Token addresses for reference
+tokens:
+  WETH:
+    address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    symbol: "WETH"
+    decimals: 18
+
+  USDC:
+    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+    symbol: "USDC"
+    decimals: 6
+
+# Pool metadata for fee tier identification
+pools:
+  - address: "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"
+    name: "ETH-USDC-0.05"
+    fee: "0.05%"
+    feeTier: 500
+
+  - address: "0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8"
+    name: "ETH-USDC-0.3"
+    fee: "0.3%"
+    feeTier: 3000
+
+  - address: "0x7BeA39867e4169DBe237d55C8242a8f2fcDcc387"
+    name: "ETH-USDC-1.0"
+    fee: "1%"
+    feeTier: 10000

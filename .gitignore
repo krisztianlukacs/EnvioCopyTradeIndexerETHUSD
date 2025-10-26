@@ -1,1 +1,52 @@
+# Environment variables with API keys
+.env
+.env.local
+
+# Node modules
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Python virtual environments
 venv/
+env/
+ENV/
+.venv
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Envio generated files
+generated/
+.envio/
+
+# Data outputs
+data/
+*.db
+*.sqlite
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo

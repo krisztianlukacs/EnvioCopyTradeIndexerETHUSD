@@ -1,0 +1,234 @@
+# Schema for Copy Trading Detection and Monitoring System
+# Based on existing CopyTrader project migrated to Envio HyperIndex
+
+"""
+Trade entity representing ETH/USDC swap transactions
+Tracks all trading activity across monitored wallets and pools
+"""
+type Trade @entity {
+  # Unique identifier (transaction hash + log index)
+  id: ID!
+
+  # Transaction metadata
+  transactionHash: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  logIndex: Int!
+
+  # Chain information
+  chain: String!
+
+  # Protocol and pool information
+  protocol: String!
+  poolAddress: String!
+  poolFee: String!
+
+  # Wallet information
+  walletAddress: String!
+  walletName: String
+
+  # Trade direction (from wallet perspective)
+  tradeType: TradeType!
+
+  # Amounts
+  ethAmount: BigDecimal!
+  usdcAmount: BigDecimal!
+
+  # Price (USDC per ETH)
+  price: BigDecimal!
+
+  # Swap participants
+  sender: String!
+  recipient: String!
+
+  # Raw event data for analysis
+  amount0: BigDecimal!
+  amount1: BigDecimal!
+
+  # Calculated metrics
+  slippage: BigDecimal
+
+  # Relations
+  dailySummary: DailySummary
+  walletActivity: WalletActivity
+}
+
+"""
+Trade direction from wallet's perspective
+"""
+enum TradeType {
+  BUY  # Wallet receives ETH (gives USDC)
+  SELL # Wallet receives USDC (gives ETH)
+}
+
+"""
+Daily summary aggregating all trades for a specific date
+"""
+type DailySummary @entity {
+  # Date in YYYY-MM-DD format
+  id: ID!
+
+  date: String!
+  chain: String!
+
+  # Summary statistics
+  totalTransactions: Int!
+  totalVolumeEth: BigDecimal!
+  totalVolumeUsdc: BigDecimal!
+  uniqueWallets: Int!
+  uniquePools: Int!
+
+  # Buy/Sell breakdown
+  buyCount: Int!
+  sellCount: Int!
+  totalBuyEth: BigDecimal!
+  totalSellEth: BigDecimal!
+  totalBuyUsdc: BigDecimal!
+  totalSellUsdc: BigDecimal!
+
+  # Price metrics
+  avgBuyPrice: BigDecimal!
+  avgSellPrice: BigDecimal!
+  minPrice: BigDecimal!
+  maxPrice: BigDecimal!
+
+  # Timestamp
+  lastUpdated: BigInt!
+
+  # Relations
+  trades: [Trade!]! @derivedFrom(field: "dailySummary")
+}
+
+"""
+Wallet activity tracking individual wallet trading patterns
+"""
+type WalletActivity @entity {
+  # Wallet address + date (YYYY-MM-DD)
+  id: ID!
+
+  walletAddress: String!
+  walletName: String
+  date: String!
+  chain: String!
+
+  # Transaction statistics
+  transactionCount: Int!
+  buyCount: Int!
+  sellCount: Int!
+
+  # Volume
+  totalBuyEth: BigDecimal!
+  totalSellEth: BigDecimal!
+  totalBuyUsdc: BigDecimal!
+  totalSellUsdc: BigDecimal!
+
+  # Net positions
+  netEthPosition: BigDecimal!
+  netUsdcPosition: BigDecimal!
+
+  # Price metrics
+  avgBuyPrice: BigDecimal!
+  avgSellPrice: BigDecimal!
+
+  # Performance metrics
+  realizedPnl: BigDecimal
+
+  # Timestamp
+  lastUpdated: BigInt!
+
+  # Relations
+  trades: [Trade!]! @derivedFrom(field: "walletActivity")
+}
+
+"""
+Similarity events for copy trading detection
+Stores detected patterns indicating potential copy trading behavior
+"""
+type SimilarityEvent @entity {
+  # Unique identifier
+  id: ID!
+
+  # Detection metadata
+  timestamp: BigInt!
+  blockNumber: BigInt!
+
+  # Suspect wallet information
+  suspectWallet: String!
+  suspectWalletName: String
+
+  # Reference strategy/wallet
+  referenceWallet: String!
+  referenceWalletName: String
+
+  # Similarity metrics
+  similarityScore: BigDecimal!
+
+  # Detection details
+  patternType: String!
+  timeAlignment: BigDecimal # Seconds between trades
+  volumeCorrelation: BigDecimal
+  priceCorrelation: BigDecimal
+
+  # Evidence trades
+  suspectTradeId: String!
+  referenceTradeId: String!
+
+  # Actions taken
+  actionTaken: String
+  alertSent: Boolean!
+
+  # Chain
+  chain: String!
+}
+
+"""
+Pool statistics for monitoring liquidity and activity
+"""
+type PoolStats @entity {
+  # Pool address + date
+  id: ID!
+
+  poolAddress: String!
+  poolName: String!
+  poolFee: String!
+  date: String!
+  chain: String!
+
+  # Volume statistics
+  swapCount: Int!
+  totalVolumeEth: BigDecimal!
+  totalVolumeUsdc: BigDecimal!
+  uniqueTraders: Int!
+
+  # Price statistics
+  avgPrice: BigDecimal!
+  minPrice: BigDecimal!
+  maxPrice: BigDecimal!
+
+  # Timestamp
+  lastUpdated: BigInt!
+}
+
+"""
+Monitored wallet configuration
+Tracks which wallets we're actively monitoring
+"""
+type MonitoredWallet @entity {
+  # Wallet address
+  id: ID!
+
+  walletAddress: String!
+  walletName: String!
+
+  # Monitoring status
+  isActive: Boolean!
+  addedAt: BigInt!
+
+  # Statistics
+  totalTrades: Int!
+  firstTradeAt: BigInt
+  lastTradeAt: BigInt
+
+  # Chain
+  chain: String!
+}

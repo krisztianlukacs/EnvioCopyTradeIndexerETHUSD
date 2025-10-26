@@ -1,0 +1,13 @@
+# Python dependencies for Envio analytics integration
+
+# HTTP requests for GraphQL queries
+requests>=2.31.0
+
+# Import from original CopyTrader project
+# Note: The original project's dependencies are also needed
+# See /home/lukacsk/Development/CopyTrader/requirements.txt
+
+# From original project:
+pydantic>=2.5.0
+python-dotenv>=1.0.0
+pyyaml>=6.0.1

@@ -1,0 +1,30 @@
+{
+  "name": "envio-copytrader-indexer",
+  "version": "1.0.0",
+  "description": "Copy Trading Detection and Monitoring System using Envio HyperIndex",
+  "main": "src/EventHandlers.ts",
+  "scripts": {
+    "dev": "envio dev",
+    "codegen": "envio codegen",
+    "test": "envio test",
+    "stop": "envio stop"
+  },
+  "keywords": [
+    "envio",
+    "hyperindex",
+    "blockchain",
+    "uniswap",
+    "copy-trading",
+    "eth",
+    "usdc"
+  ],
+  "author": "Your Team",
+  "license": "MIT",
+  "devDependencies": {
+    "envio": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@envio-dev/hypersync-client": "^0.6.0"
+  }
+}
